@@ -157,7 +157,7 @@ const Controller = ((model, view) => {
 
             state.users = clickCount % 2 === 0 ? [...sorted] : [...sorted].reverse()
             clickCount++
-            tempAllUsers=[...state.allUsers]
+            
         })
     }
 
@@ -181,10 +181,9 @@ const Controller = ((model, view) => {
             // check values of input
             if (checkInputValues(name.value, phone.value, email.value)) {
                 const newUser = new model.User(name.value, phone.value, email.value)
-               
-               
-                state.users = [newUser,...state.allUsers]
-               
+               const temp=[...state.allUsers]
+               temp.push(newUser)
+                state.users = [...temp]
                 tempAllUsers=[...state.allUsers]
                 // reset inputs
 
