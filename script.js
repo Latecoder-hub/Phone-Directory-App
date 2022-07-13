@@ -81,7 +81,7 @@ const Model = ((Users, view) => {
         constructor(userName, phone, email) {
             this.userName = userName
             this.phone = phone,
-                this.email = email
+            this.email = email
 
         }
     }
@@ -99,7 +99,7 @@ const Model = ((Users, view) => {
             this.allUsers = [...newUserList]
             const domElement = document.querySelector(view.domstr.container)
             const container1 = view.createTemplate(this.allUsers, view.createObjTmp)
-
+            document.querySelector(view.domstr.noResult).style.display = container1 ? "none" : "block"
             view.render(domElement, container1)
 
 
@@ -121,6 +121,8 @@ const Model = ((Users, view) => {
 const Controller = ((model, view) => {
     // state
     const state = new model.State()
+    let tempAllUsers
+    
     const searchMobile = () => {
         const searchBox = document.querySelector(view.domstr.search);
 
@@ -131,19 +133,19 @@ const Controller = ((model, view) => {
                 return number === temp.slice(0, -(temp.length - number.length))
             }
             )
+            
 
         searchBox.addEventListener('keyup', (event) => {
-            const searchResult = event.target.value ? searchNumber(searchBox.value, state.allUsers) : [...state.allUsers]
+            state.users = event.target.value ? searchNumber(searchBox.value,tempAllUsers) : [...tempAllUsers]
 
-            const domElement = document.querySelector(view.domstr.container)
-            const container1 = view.createTemplate(searchResult, view.createObjTmp)
-            view.render(domElement, container1)
-            document.querySelector(view.domstr.noResult).style.display = container1 ? "none" : "block"
+            
 
 
         });
 
     }
+
+    // convert table to alphabetic order
     const alphabeticOrder = () => {
         const nameButton = document.querySelector(view.domstr.nameColumn)
         let clickCount = 0
@@ -155,6 +157,7 @@ const Controller = ((model, view) => {
 
             state.users = clickCount % 2 === 0 ? [...sorted] : [...sorted].reverse()
             clickCount++
+            tempAllUsers=[...state.allUsers]
         })
     }
 
@@ -176,11 +179,15 @@ const Controller = ((model, view) => {
         }
         submit.addEventListener("click", () => {
             // check values of input
-            if(checkInputValues(name.value, phone.value, email.value)){
+            if (checkInputValues(name.value, phone.value, email.value)) {
                 const newUser = new model.User(name.value, phone.value, email.value)
-                state.users = [newUser, ...state.allUsers]
-                 // reset inputs
-            
+               
+               
+                state.users = [newUser,...state.allUsers]
+               
+                tempAllUsers=[...state.allUsers]
+                // reset inputs
+
                 name.value = ""
                 email.value = ""
                 phone.value = ""
@@ -188,10 +195,10 @@ const Controller = ((model, view) => {
             else {
                 document.querySelector(view.domstr.error).style.display = "block"
             }
-            
 
-            
-          
+
+
+
         })
 
 
@@ -208,6 +215,7 @@ const Controller = ((model, view) => {
         const defaultUsers = model.defaultUsers
 
         state.users = [...defaultUsers]
+        tempAllUsers=[...state.allUsers]
 
     }
 
