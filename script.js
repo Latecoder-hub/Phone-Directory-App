@@ -17,7 +17,6 @@ const defaultUsers = [{
 ]
 
 
-
 //===================View======================================= 
 const View = (() => {
     // dom elements 
@@ -106,6 +105,7 @@ const Model = ((Users, view) => {
 
         }
     }
+    // default users
     const defaultUsers = [...Users]
 
 
@@ -121,12 +121,13 @@ const Model = ((Users, view) => {
 const Controller = ((model, view) => {
     // state
     const state = new model.State()
+    // created temporary state holder for mobile search
     let tempAllUsers
     
     const searchMobile = () => {
         const searchBox = document.querySelector(view.domstr.search);
 
-        // return elements equal to phone number's parts
+        // return elements equal to mobile phone's first numbers
         const searchNumber = (number, arr) =>
             arr.filter(element => {
                 const temp = element.phone.toString()
@@ -134,7 +135,7 @@ const Controller = ((model, view) => {
             }
             )
             
-
+        // added event listener for searchbox
         searchBox.addEventListener('keyup', (event) => {
             state.users = event.target.value ? searchNumber(searchBox.value,tempAllUsers) : [...tempAllUsers]
 
@@ -148,9 +149,10 @@ const Controller = ((model, view) => {
     // convert table to alphabetic order
     const alphabeticOrder = () => {
         const nameButton = document.querySelector(view.domstr.nameColumn)
+        // temp variable for reverse sorted array
         let clickCount = 0
         nameButton.addEventListener('click', () => {
-
+        // sort algorithm
             const sorted = state.allUsers.sort(function (a, b) {
                 return a.userName.localeCompare(b.userName);
             });
@@ -160,13 +162,14 @@ const Controller = ((model, view) => {
             
         })
     }
-
+    // adding new user to table
     const addUser = () => {
 
         const submit = document.getElementById(view.domstr.submit)
         const name = document.getElementById(view.domstr.name)
         const email = document.getElementById(view.domstr.email)
         const phone = document.getElementById(view.domstr.mobile)
+        // input control with regex, return true if all input values are correct
         const checkInputValues = (name, phone, email) => {
             const regexName = /^[a-zA-Z ]*$/
             const regexPhone = /^[0-9]*$/
@@ -177,6 +180,7 @@ const Controller = ((model, view) => {
             const checkEmail = (email) => regexEmail.test(email) && email.length < 41
             return checkName(name) && checkPhone(phone) && checkEmail(email)
         }
+        // event listener for submit button
         submit.addEventListener("click", () => {
             // check values of input
             if (checkInputValues(name.value, phone.value, email.value)) {
@@ -186,11 +190,12 @@ const Controller = ((model, view) => {
                 state.users = [...temp]
                 tempAllUsers=[...state.allUsers]
                 // reset inputs
-
+                
                 name.value = ""
                 email.value = ""
                 phone.value = ""
             }
+            // error message
             else {
                 document.querySelector(view.domstr.error).style.display = "block"
             }
@@ -199,13 +204,6 @@ const Controller = ((model, view) => {
 
 
         })
-
-
-
-
-
-
-
 
     }
 
